@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Phone">
+
+	<select id="select" resultType="Phone" parameterType="int">
+		select * from phone where phone_idx =#{phone_idx}
+	</select>
+	
+	
+	<select id="selectByMember" resultType="Phone" parameterType="int">
+		select * from phone where member_idx =#{member_idx}
+	</select>
+	
+
+	<insert id="insert" parameterType="Phone">
+		insert into phone(phone_idx, member_idx, phoneNumber)
+		values(seq_phone.nextval, #{member.member_idx}, #{phoneNumber})
+	</insert>
+
+</mapper>

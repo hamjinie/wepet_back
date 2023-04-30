@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Member">
+
+<!-- member_idx로 가져올 정보들 -->
+    <resultMap type="Member" 		id="memberMap"> 
+        <id     column="member_idx"  property="member_idx"/>
+        <result column="nickname"    property="nickname"/>
+        <result column="id"        		property="id"/>
+        <result column="regdate"     property="regdate"/>
+
+	<!-- association 한명의 회원이 펫시터 1:1 관계 // 펫시터를 가져오면 펫시터에 딸려있 apply 상태도 같이 -->
+	
+<association column="member_idx" 
+		property="petSitter"
+		javaType="PetSitter" 
+		select="PetSitter.select" /> 
+		
+		
+		<!-- 부모 ) sns -->
+	<association
+			column="sns_idx" 
+			property="sns"
+			javaType="Sns"
+			select="Sns.selectByMember"
+		/> 
+					
+	<!-- 자식) Email -->	
+	<association 
+		column="member_idx"
+		property="email"
+		javaType="Email"
+		select="Email.selectByMember"/> 
+		
+	<!-- 자식 ) phone -->
+	<association 
+		column="member_idx"
+		property="phone"
+		javaType="Phone"
+		select="Phone.selectByMember"/> 
+	
+
+		
+</resultMap>
+
+
+	<!-- 일반회원 리스트 불러오기 -->
+	<select id="selectAll" resultMap="memberMap" >
+		select * from member 
+	</select>
+	
+	<!-- 고유 id를 통한 회원 조회 -->
+	<select id="selectById" parameterType="String" resultType="Member">
+		select * from member where id=#{id}
+	</select>	
+
+	<!-- 한건 상세보기 -->
+	<select id="select" parameterType="int" resultMap="memberMap">
+		select * from member where member_idx=#{member_idx}
+	</select>
+	
+	<!-- 회원가입 -등록  -->
+	<insert id="insert" parameterType="Member">
+		insert into member(member_idx, id, sns_idx, nickname) 
+		values(seq_member.nextval, #{id}, #{sns.sns_idx}, #{nickname})
+
+		<selectKey
+			 	keyColumn="member_idx"
+			 	keyProperty="member_idx"
+			 	order="AFTER"
+			 	resultType="int">
+			 	<!-- 현재 들어간 값을 구해야하니까 currval -->
+			 	select seq_member.currval as member_idx from dual
+		 </selectKey>
+	 
+	</insert>
+	
+	
+	<update id="update" parameterType="Member">
+		update member set id =#{id} , nickname=#{nickname}
+		where member_idx=#{member_idx}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		delete from member where member_idx=#{member_idx} 
+	</delete>
+
+</mapper>

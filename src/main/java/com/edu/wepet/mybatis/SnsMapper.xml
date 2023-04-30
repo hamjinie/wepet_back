@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sns">
+
+
+	<select id="selectByMember" resultType="Sns" parameterType="int">
+		select * from sns where sns_idx = #{sns_idx}
+	</select>
+
+
+	<select id="selectByType" resultType="Sns" parameterType="String">
+		select * from sns where sns_type=#{sns_type}
+	</select>
+
+</mapper>

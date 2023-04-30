@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SitterApply">
+
+	<!-- 펫시터 신청 구분(접수/반려/ -->
+	<select id="selectAll" resultType="SitterApply">
+		select * from sitterapply
+	</select>
+
+	<select id="selectByPetsitter" resultType="SitterApply"
+		parameterType="int">
+		select * from sitterApply where sitter_apply_idx = #{sitter_apply_idx}
+	</select>
+
+	<!-- 텍스트를 이용한 레코드 가져오기 예) 승인, 대기.. -->
+	<select id="selectByType" resultType="SitterApply"
+		parameterType="String">
+		select * from sitterApply where apply_type = #{apply_type}
+	</select>
+
+</mapper>

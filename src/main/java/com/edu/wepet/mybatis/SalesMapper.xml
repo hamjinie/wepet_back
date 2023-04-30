@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sales">
+	
+	<resultMap type="Sales" id="salesMap">
+		<id column="sales_idx" property="sales_idx"/>
+		<result column="regdate" property="regdate"/>
+		<result column="earnings" property="earnings"/>
+		<result column="gottenfee" property="gottenfee"/>
+		<result column="status" property="status"/>
+		
+		<association 
+			javaType="PetSitter"
+			property="petSitter"
+			column="petsitter_idx"
+			select="PetSitter.select"
+		/>
+	</resultMap>	
+		
+	<!-- 2 -->
+	<!-- 20 펫시터별 정산상태 토탈 합계 보기 -->
+	<select id="selectSum" resultMap="salesMap">
+		select b.petsitter_idx as petsitter_idx, sitter_nickname as sitter_nickname, sum(earnings) as earnings, sum(gottenfee) as gottenfee, min(status) as status
+		from sales a inner join petsitter b on a.petsitter_idx=b.petsitter_idx 
+		group by b.petsitter_idx, sitter_nickname
+	</select>
+	
+	<!-- 21, 22 펫시터별 정산 완료 합계 보기 -->
+	<select id="selectByStat" resultMap="salesMap" parameterType="int">
+		select b.petsitter_idx as petsitter_idx, sitter_nickname as sitter_nickname, sum(earnings) as earnings, sum(gottenfee) as gottenfee, min(status) as status
+		from sales a inner join petsitter b on a.petsitter_idx=b.petsitter_idx where status=#{status}
+		group by b.petsitter_idx, sitter_nickname
+	</select>
+	
+	<!-- 1 -->
+	<!-- 11, 12 정산 미완료 건바이건으로 보기 -->
+	<select id="selectByCase" resultMap="salesMap" parameterType="int">
+		select b.petsitter_idx as petsitter_idx, sitter_nickname as sitter_nickname, earnings, gottenfee, status
+		from sales a inner join petsitter b on a.petsitter_idx=b.petsitter_idx where status=#{status} order by regdate asc
+	</select>
+	
+	<!-- 10 전체 내역 날짜순, 건바이건으로 보기 -->
+	<select id="selectAll" resultMap="salesMap">
+		select b.petsitter_idx as petsitter_idx, sitter_nickname as sitter_nickname, sales_idx, earnings, regdate, gottenfee, status
+		from sales a inner join petsitter b on a.petsitter_idx=b.petsitter_idx order by regdate asc
+	</select>
+	
+	<!-- 3 기간 검색 -->
+	
+	
+	<update id="update" parameterType="java.util.Map">
+		update sales set gottenfee=${fee}, status=1 where sales_idx=${sales_idx}
+	</update>
+	
+</mapper>
